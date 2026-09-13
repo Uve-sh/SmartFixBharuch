@@ -13,7 +13,7 @@ export const Route = createFileRoute('/admin')({
   })
 });
 
-const ADMIN_EMAIL = 'smartfixtrainingcenter@gmail.com';
+const ADMIN_USERNAME = 'admin';
 const ADMIN_PASSWORD = 'smartfix2026';
 const SESSION_KEY = 'smartfix-admin-session-v1';
 
@@ -179,9 +179,15 @@ function AdminPage() {
                 </button>
               </div>
             ))}
-            <button onClick={() => setDraft({...draft, products: [...draft.products, { name: '', price: '', imageUrl: '' }]})} className="w-full py-4 border-2 border-dashed border-border rounded-2xl text-muted-foreground font-medium flex items-center justify-center gap-2 hover:border-primary hover:text-primary transition-colors">
-              <Plus className="w-5 h-5" /> Add Product
-            </button>
+            {draft.products.length < 6 ? (
+              <button onClick={() => setDraft({...draft, products: [...draft.products, { name: '', price: '', imageUrl: '' }]})} className="w-full py-4 border-2 border-dashed border-border rounded-2xl text-muted-foreground font-medium flex items-center justify-center gap-2 hover:border-primary hover:text-primary transition-colors">
+                <Plus className="w-5 h-5" /> Add Product
+              </button>
+            ) : (
+              <div className="w-full py-4 bg-secondary/50 rounded-2xl text-muted-foreground text-sm font-medium flex items-center justify-center text-center px-4">
+                Contact your web provider to add more products
+              </div>
+            )}
           </div>
         </Card>
 
@@ -195,16 +201,16 @@ function AdminPage() {
 // -----------------------------------------------------------------------------
 
 function Login({ onLogin }: { onLogin: () => void }) {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       onLogin();
     } else {
-      setError('Invalid email or password');
+      setError('Invalid username or password');
     }
   };
 
@@ -219,7 +225,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
         <p className="text-center text-muted-foreground text-sm mb-8">Sign in to edit your digital profile.</p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input required type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-secondary rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all" />
+          <input required type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-secondary rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all" />
           <input required type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-secondary rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary border border-transparent transition-all" />
           {error && <p className="text-sm text-destructive text-center font-medium">{error}</p>}
           <button type="submit" className="w-full gold-surface text-primary-foreground py-3.5 rounded-xl font-bold shadow-gold hover:scale-[1.02] transition-transform mt-4">

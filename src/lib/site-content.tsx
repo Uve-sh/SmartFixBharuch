@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 
 export type Product = {
   name: string;
@@ -51,12 +52,12 @@ export const DEFAULT_CONTENT: SiteContent = {
   shopImageUrl: '/assets/shop.jpg',
   galleryImages: [],
   products: [
-    { name: 'Tempered Glass & Covers', price: 'From ₹99', imageUrl: '' },
-    { name: 'Fast Chargers & Cables', price: 'From ₹249', imageUrl: '' },
-    { name: 'Power Banks', price: 'From ₹699', imageUrl: '' },
-    { name: 'Earphones & Neckbands', price: 'From ₹399', imageUrl: '' },
-    { name: 'Screen Replacement', price: 'Quote on inspection', imageUrl: '' },
-    { name: 'Repairing Course Kit', price: 'Ask in store', imageUrl: '' }
+    { name: 'Tempered Glass & Covers', price: 'From ₹99', imageUrl: 'https://picsum.photos/seed/glass/400/300' },
+    { name: 'Fast Chargers & Cables', price: 'From ₹249', imageUrl: 'https://picsum.photos/seed/cable/400/300' },
+    { name: 'Power Banks', price: 'From ₹699', imageUrl: 'https://picsum.photos/seed/power/400/300' },
+    { name: 'Earphones & Neckbands', price: 'From ₹399', imageUrl: 'https://picsum.photos/seed/audio/400/300' },
+    { name: 'Screen Replacement', price: 'Quote on inspection', imageUrl: 'https://picsum.photos/seed/screen/400/300' },
+    { name: 'Repairing Course Kit', price: 'Ask in store', imageUrl: 'https://picsum.photos/seed/tools/400/300' }
   ],
 };
 
