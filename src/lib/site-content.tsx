@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { supabase } from './supabase';
 
 export type Product = {
   name: string;
@@ -87,25 +88,64 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setContent(mergeWithDefaults(JSON.parse(stored)));
+    async function load() {
+      try {
+        let loadedContent = null;
+        if (supabase) {
+          const { data, error } = await supabase
+            .from('site_settings')
+            .select('content')
+            .eq('id', 1)
+            .single();
+          if (data && data.content) {
+            loadedContent = data.content;
+          } else if (error && error.code !== 'PGRST116') { // PGRST116 is 'not found'
+            console.error('Failed to parse site content from Supabase', error);
+          }
+        }
+        
+        if (!loadedContent) {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            loadedContent = JSON.parse(stored);
+          }
+        }
+        
+        if (loadedContent) {
+          setContent(mergeWithDefaults(loadedContent));
+        }
+      } catch (e) {
+        console.error('Failed to load site content', e);
+      } finally {
+        setHydrated(true);
       }
-    } catch (e) {
-      console.error('Failed to parse site content from local storage', e);
     }
-    setHydrated(true);
+    
+    load();
   }, []);
 
-  const save = (next: SiteContent) => {
+  const save = async (next: SiteContent) => {
     setContent(next);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    
+    if (supabase) {
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({ id: 1, content: next });
+      if (error) {
+        console.error('Failed to save to Supabase', error);
+        alert('Failed to save to cloud database. Changes saved locally only.');
+      }
+    }
   };
 
-  const reset = () => {
+  const reset = async () => {
     setContent(DEFAULT_CONTENT);
     localStorage.removeItem(STORAGE_KEY);
+    
+    if (supabase) {
+      await supabase.from('site_settings').delete().eq('id', 1);
+    }
   };
 
   return (
